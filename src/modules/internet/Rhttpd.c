@@ -582,7 +582,7 @@ static void process_request_(void *ptr)
 				  sTrue));
 	SET_TAG(CDR(CDR(x)), install("silent"));
 	DBG(Rprintf("eval(try(httpd('%s'),silent=TRUE))\n", c->url));
-	
+
 	/* evaluate the above in the tools namespace */
 	SEXP toolsNS = PROTECT(R_FindNamespace(mkString("tools")));
 	x = eval(x, toolsNS);
@@ -782,7 +782,7 @@ static void worker_input_handler(void *data) {
      * into one packet. */
     if (c->part < PART_BODY) {
 	char *s = c->line_buf;
-	ssize_t n = recv(c->sock, c->line_buf + c->line_pos, 
+	ssize_t n = recv(c->sock, c->line_buf + c->line_pos,
 			 LINE_BUF_SIZE - c->line_pos - 1, 0);
 	DBG(printf("[recv n=%d, line_pos=%d, part=%d]\n", n, c->line_pos, (int)c->part));
 	if (n < 0) { /* error, scrape this worker */
@@ -862,7 +862,7 @@ static void worker_input_handler(void *data) {
 		while (*s && *s != '\r' && *s != '\n') s++;
 		if (!*s) { /* incomplete line */
 		    if (bol == c->line_buf) {
-			if (c->line_pos < LINE_BUF_SIZE) /* one, incomplete line, but the buffer is not full yet, just return */
+			if (c->line_pos < LINE_BUF_SIZE - 1) /* one, incomplete line, but the buffer is not full yet, just return */
 			    return;
 			/* the buffer is full yet the line is incomplete - we're in trouble */
 			send_http_response(c, " 413 Request entity too large\r\nConnection: close\r\n\r\n");
@@ -904,7 +904,7 @@ static void worker_input_handler(void *data) {
 				memcpy(c->headers->data + c->headers->length, "Request-Method: ", 16);
 				c->headers->length += 16;
 				memcpy(c->headers->data + c->headers->length, bol, mend - bol);
-				c->headers->length += mend - bol;	
+				c->headers->length += mend - bol;
 				c->headers->data[c->headers->length++] = '\n';
 			    }
 			}
@@ -936,7 +936,7 @@ static void worker_input_handler(void *data) {
 				    }
 				} else {
 				    memcpy(c->headers->data + c->headers->length, bol, l);
-				    c->headers->length += l;	
+				    c->headers->length += l;
 				    c->headers->data[c->headers->length++] = '\n';
 				}
 			    }
@@ -989,7 +989,7 @@ static void worker_input_handler(void *data) {
     if (c->part == PART_BODY && c->body) { /* BODY  - this branch always returns */
 	if (c->body_pos < c->content_length) { /* need to receive more ? */
 	    DBG(printf("BODY: body_pos=%d, content_length=%ld\n", c->body_pos, c->content_length));
-	    ssize_t n = recv(c->sock, c->body + c->body_pos, 
+	    ssize_t n = recv(c->sock, c->body + c->body_pos,
 			    c->content_length - c->body_pos, 0);
 	    DBG(printf("      [recv n=%d - had %u of %lu]\n", n, c->body_pos, c->content_length));
 	    c->line_pos = 0;
@@ -1060,7 +1060,7 @@ static void worker_input_handler(void *data) {
 		return;
 	    }
 	}
-	ssize_t n = recv(c->sock, c->line_buf + c->line_pos, 
+	ssize_t n = recv(c->sock, c->line_buf + c->line_pos,
 			 LINE_BUF_SIZE - c->line_pos - 1, 0);
 	if (n < 0) { /* error, scrap this worker */
 	    remove_worker(c);
@@ -1159,7 +1159,7 @@ static void srv_input_handler(void *data)
 #endif
 }
 
-int in_R_HTTPDCreate(const char *ip, int port) 
+int in_R_HTTPDCreate(const char *ip, int port)
 {
 #ifndef _WIN32
     int reuse = 1;
