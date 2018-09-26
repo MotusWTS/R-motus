@@ -187,3 +187,27 @@ tests/Embedding/Makefile
 tests/Examples/Makefile
 tests/Makefile
 tools/Makefile
+## built objects
+**/Makedeps
+**.so
+**.a
+**.o
+**.d
+**.ts
+src/library/*/all.R
+doc/html/*.html
+doc/manual/*.html
+src/library/Recommended/stamp-recommended
+src/library/stamp-docs
+src/main/R.bin
+src/scripts/R.fe
+src/unix/Rscript
+stamp-java
+al/*.html
+src/library/*.inn
+bin/
+doc/NEWS.rds
+doc/R.1
+doc/manual/stamp-images-html
+doc/manual/version.texi
+library/

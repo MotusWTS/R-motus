@@ -1211,7 +1211,7 @@ SEXP attribute_hidden do_listfiles(SEXP call, SEXP op, SEXP args, SEXP rho)
     if (pattern && tre_regcomp(&reg, translateChar(STRING_ELT(p, 0)), flags))
 	error(_("invalid 'pattern' regular expression"));
     PROTECT_INDEX idx;
-    SEXP ans;
+    SEXP ans, prot;
     PROTECT_WITH_INDEX(ans = allocVector(STRSXP, countmax), &idx);
     int count = 0;
     for (int i = 0; i < LENGTH(d) ; i++) {
@@ -1223,8 +1223,9 @@ SEXP attribute_hidden do_listfiles(SEXP call, SEXP op, SEXP args, SEXP rho)
     }
     REPROTECT(ans = lengthgets(ans, count), idx);
     if (pattern) tre_regfree(&reg);
+    prot = PROTECT(duplicate(ans));
     ssort(STRING_PTR(ans), count);
-    UNPROTECT(1);
+    UNPROTECT(2);
     return ans;
 }
 
@@ -1293,7 +1294,7 @@ static void list_dirs(const char *dnp, const char *nm,
 SEXP attribute_hidden do_listdirs(SEXP call, SEXP op, SEXP args, SEXP rho)
 {
     PROTECT_INDEX idx;
-    SEXP d, ans;
+    SEXP d, ans, prot;
     int fullnames, count, i, recursive;
     const char *dnp;
     int countmax = 128;
@@ -1316,8 +1317,9 @@ SEXP attribute_hidden do_listdirs(SEXP call, SEXP op, SEXP args, SEXP rho)
 	list_dirs(dnp, "", fullnames, &count, &ans, &countmax, idx, recursive);
     }
     REPROTECT(ans = lengthgets(ans, count), idx);
+    prot = PROTECT(duplicate(ans));
     ssort(STRING_PTR(ans), count);
-    UNPROTECT(1);
+    UNPROTECT(2);
     return ans;
 }
 
