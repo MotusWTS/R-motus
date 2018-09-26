@@ -12,7 +12,7 @@ users.
 
 2018-01-09
 ``` bash
-    ./configure --enable-R-shlib --without-x
+    ./configure --enable-R-shlib --without-x --with-cairo --prefix=/usr
 ```
 
 
